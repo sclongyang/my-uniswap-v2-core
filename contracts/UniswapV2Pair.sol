@@ -431,7 +431,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
 
     /**
      * @param to to地址
-     * @dev 强制平衡以匹配储备
+     * @dev 按照储备金, 修改余额. 强制让余额与储备金匹配
      */
     // force balances to match reserves
     function skim(address to) external lock {
@@ -451,7 +451,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
     }
 
     /**
-     * @dev 强制准备金与余额匹配
+     * @dev 按照余额, 修改储备金. 强制让准备金与余额匹配
      */
     // force reserves to match balances
     function sync() external lock {

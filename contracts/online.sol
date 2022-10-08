@@ -366,6 +366,7 @@ library UniswapV2Library {
         //分母 = 储备量In * 1000 + 税后输入数额
         uint256 denominator = reserveIn.mul(1000).add(amountInWithFee);
         //输出数额 = 分子 / 分母
+        // 通过 x*y=k 完全手推该公式, 很简单         
         amountOut = numerator / denominator;
     }
 
@@ -678,7 +679,7 @@ contract UniswapV2Router01 is IUniswapV2Router01 {
     //布署时定义的常量工厂地址和weth地址
     address public factory;
     address public WETH;
-    //修饰符:确保最后期限大于当前时间
+    //修饰符:确保最后期限大于当前时间, 用于以太坊拥堵时, tx的时效性
     modifier ensure(uint256 deadline) {
         // solium-disable-next-line security/no-block-members
         require(deadline >= block.timestamp, "UniswapV2Router: EXPIRED");
@@ -769,7 +770,7 @@ contract UniswapV2Router01 is IUniswapV2Router01 {
     }
 
     /**
-     * @dev 添加流动性方法
+     * @dev 添加流动性方法: pair不存在就创建pair, 再调用pair的mint()创建流动性
      * @param tokenA tokenA地址
      * @param tokenB tokenB地址
      * @param amountADesired 期望数量A
@@ -955,7 +956,7 @@ contract UniswapV2Router01 is IUniswapV2Router01 {
     }
 
     /**
-     * @dev 带签名移除流动性
+     * @dev 带签名移除流动性, 有了签名就不必调用approve()了, 可以把两步操作变成一步操作
      * @param tokenA tokenA地址
      * @param tokenB tokenB地址
      * @param liquidity 流动性数量
@@ -1010,7 +1011,7 @@ contract UniswapV2Router01 is IUniswapV2Router01 {
     }
 
     /**
-     * @dev 带签名移除ETH流动性
+     * @dev 带签名移除ETH流动性:有了签名就不必调用approve()了, 可以把两步操作变成一步操作
      * @param token token地址
      * @param liquidity 流动性数量
      * @param amountTokenMin token最小数量
