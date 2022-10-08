@@ -382,6 +382,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
             //如果`输出数量1` > 0 安全发送`输出数量1`的token1到to地址
             if (amount1Out > 0) _safeTransfer(_token1, to, amount1Out); // optimistically transfer tokens
             //如果data的长度大于0 调用to地址的接口
+            //这里是在做闪电贷
             if (data.length > 0)
                 IUniswapV2Callee(to).uniswapV2Call(
                     msg.sender,
@@ -414,6 +415,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
             //调整后的余额1 = 余额1 * 1000 - (amount1In * 3)
             uint256 balance1Adjusted = balance1.mul(1000).sub(amount1In.mul(3));
             //确认balance0Adjusted * balance1Adjusted >= 储备0 * 储备1 * 1000000
+            //作用是确认 这是由路由调用的, 已经收过税了, 防止用户不经过路由,私自调用
             require(
                 balance0Adjusted.mul(balance1Adjusted) >=
                     uint256(_reserve0).mul(_reserve1).mul(1000**2),
